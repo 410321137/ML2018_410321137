@@ -35,7 +35,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ak = self.res(wt, xk)
                     ek = self.E[i][j] - ak
                     sk = a * ek * xk
-                    temp = wt.copy()
                     wt = wt + sk
             we = np.array([wt[0] / we[0], wt[1] / we[1], wt[2] / we[2]])
             if(we[0] < 1 + ee and we[0] > 1 - ee and we[1] < 1 + ee and we[1] > 1 - ee and we[1] < 1 + ee and we[1] > 1 - ee):
