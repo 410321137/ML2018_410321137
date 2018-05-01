@@ -24,17 +24,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         wt = np.array([random.randint(0, 1), random.randint(0, 1), random.randint(0, 1)], np.int32)
         ak = list()
         ek = list()
+        we = np.array([1, 1, 1])
+        ee = float(self.lineEdit.text())
         IE = self.eprime.copy()
         IE2 = self.E.copy()
-        while(epoch ==1 or epoch < MaxIterLimit):
+        while(epoch == 1 or epoch < MaxIterLimit):
             for i in range (0, self.eprime.shape[0]):
                 for j in range (0, self.eprime.shape[1]):
                     xk = np.array([self.key1[i][j], self.key2[i][j], self.I[i][j]])
                     ak = self.res(wt, xk)
                     ek = self.E[i][j] - ak
                     sk = a * ek * xk
+                    temp = wt.copy()
                     wt = wt + sk
+            we = np.array([wt[0] / we[0], wt[1] / we[1], wt[2] / we[2]])
+            if(we[0] < 1 + ee and we[0] > 1 - ee and we[1] < 1 + ee and we[1] > 1 - ee and we[1] < 1 + ee and we[1] > 1 - ee):
+                break
             epoch = epoch + 1
+        self.label_3.setText("訓練次數: " + str(epoch))
 
         for i in range (0, self.eprime.shape[0]):
                 for j in range (0, self.eprime.shape[1]):
