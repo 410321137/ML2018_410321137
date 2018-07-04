@@ -1,9 +1,10 @@
 import os
-import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from PIL import Image
+from time import time
+from sklearn.pipeline import Pipeline
 from scipy.ndimage import imread
 from scipy.misc import imresize
 from sklearn.decomposition import PCA
@@ -12,6 +13,7 @@ from sklearn.datasets import fetch_mldata
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 from sklearn import svm
@@ -74,6 +76,14 @@ def open_trainset():
 
     return train_x, train_y, test_x, test_y
 
+def save_reduce(train_x_reduced, test_x_reduced):
+    f = open('train_x_reduced.pickle', 'wb')
+    pickle.dump(train_x_reduced, f)
+    f.close()
+    f = open('test_x_reduced.pickle', 'wb')
+    pickle.dump(test_x_reduced, f)
+    f.close()
+
 def find_d(explained_variance_ratio_, p):
     sum = 0
     n = 0
@@ -84,6 +94,15 @@ def find_d(explained_variance_ratio_, p):
             break
     return n
 
+def find_parameter(train_x_reduced, train_y):
+    param_grid = {'C': [1, 1e2, 1e3, 5e3, 1e4, 5e4, 1e5],
+              'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
+    clf = GridSearchCV(svm.SVC(kernel='rbf', class_weight='balanced'), param_grid)
+    clf = clf.fit(train_x_reduced, train_y)
+    print(clf.best_estimator_)
+
+    return clf.best_params_
+
 if __name__ == '__main__':
     #產生測試集資料
     #train_x, train_y, test_x, test_y = load_data()
@@ -92,7 +111,7 @@ if __name__ == '__main__':
 
     #讀取
     train_x, train_y, test_x, test_y = open_trainset()
-    print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
+    #print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
 
     #pca降維
     '''
@@ -107,21 +126,22 @@ if __name__ == '__main__':
     pca = PCA(n_components=100)
     train_x_reduced = pca.fit_transform(train_x)
     test_x_reduced = pca.fit_transform(test_x)
-    f = open('train_x_reduced.pickle', 'wb')
-    pickle.dump(train_x_reduced, f)
-    f.close()
-    f = open('test_x_reduced.pickle', 'wb')
-    pickle.dump(test_x_reduced, f)
-    f.close()
-    print(train_x_reduced.shape, train_y.shape, test_x_reduced.shape, test_y.shape)
+    #save_reduce(train_x_reduced, test_x_reduced)
+    #print(train_x_reduced.shape, train_y.shape, test_x_reduced.shape, test_y.shape)
 
-    #尋找SVM的參數
-    param_grid = { "C" : [0.5], "gamma" : [0.5]}
-    rf = svm.SVC()
-    gs = GridSearchCV(estimator=rf, param_grid=param_grid, scoring='accuracy', cv=2, n_jobs=-1, verbose=1)
-    gs = gs.fit(train_x_reduced, train_y)
-    print(gs.best_score_)
-    print(gs.best_params_)
+    #尋找合適參數
+    para = find_parameter(train_x_reduced, train_y)
+
+    pipe1 = Pipeline([('sc', StandardScaler()),
+                    ('pca', PCA(n_components=100)),
+                    ('clf', LogisticRegression(random_state=1))
+                    ])
+    for i in range(10):
+        pipe1.fit(train_x, train_y)
+        print('Test accuracy: %.3f' % pipe1.score(test_x, test_y))
+    #f = open('pipe1.pickle', 'wb')
+    #pickle.dump(pipe1, f)
+    #f.close()
 
     #python .\main.py
 
