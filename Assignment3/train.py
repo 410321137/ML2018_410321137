@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from PIL import Image
+from scipy.ndimage import imread
+from scipy.misc import imresize
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.datasets import fetch_mldata
@@ -27,15 +29,19 @@ def load_data():
     test_y = []
     for f in files:
         if not os.path.isdir(f):
-            img = Image.open(path + '/' + f).convert('L')
-            if(photo_n < 13):
+            img = imread(path + '/' + f , mode='L')
+            img = imresize(img, (30, 40))
+            #print(img.shape)
+            img = img.flatten()
+            #print(img.shape)
+            if(photo_n < 11):
                 train_x.append(np.array(img))
                 train_y.append(people_n)
                 photo_n = photo_n + 1
             else:
                 test_x.append(np.array(img))
                 test_y.append(people_n)
-                if(photo_n == 15):
+                if(photo_n == 13):
                     photo_n = 0
                     people_n = people_n + 1
                 photo_n = photo_n + 1
@@ -56,6 +62,18 @@ def savefile(train_x, train_y, test_x, test_y):
     pickle.dump(test_y, f)
     f.close()
 
+def open_trainset():
+    train_x = open('train_x.pickle', 'rb')
+    train_x = pickle.load(train_x)
+    train_y = open('train_y.pickle', 'rb')
+    train_y = pickle.load(train_y)
+    test_x = open('test_x.pickle', 'rb')
+    test_x = pickle.load(test_x)
+    test_y = open('test_y.pickle', 'rb')
+    test_y = pickle.load(test_y)
+
+    return train_x, train_y, test_x, test_y
+
 def find_d(explained_variance_ratio_, p):
     sum = 0
     n = 0
@@ -67,9 +85,43 @@ def find_d(explained_variance_ratio_, p):
     return n
 
 if __name__ == '__main__':
-    train_x, train_y, test_x, test_y = load_data()
+    #產生測試集資料
+    #train_x, train_y, test_x, test_y = load_data()
+    #print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
+    #savefile(train_x, train_y, test_x, test_y)
+
+    #讀取
+    train_x, train_y, test_x, test_y = open_trainset()
     print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
-    savefile(train_x, train_y, test_x, test_y)
+
+    #pca降維
+    '''
+    pca = PCA()
+    pca.fit(train_x)
+    for i in np.arange(0.5, 1.0, 0.05):
+        n = find_d(pca.explained_variance_ratio_, i)
+        print(i,n)
+    '''
+    #得到0.95的特徵比例集中在100個特徵內
+    #使用n_components = 100
+    pca = PCA(n_components=100)
+    train_x_reduced = pca.fit_transform(train_x)
+    test_x_reduced = pca.fit_transform(test_x)
+    f = open('train_x_reduced.pickle', 'wb')
+    pickle.dump(train_x_reduced, f)
+    f.close()
+    f = open('test_x_reduced.pickle', 'wb')
+    pickle.dump(test_x_reduced, f)
+    f.close()
+    print(train_x_reduced.shape, train_y.shape, test_x_reduced.shape, test_y.shape)
+
+    #尋找SVM的參數
+    param_grid = { "C" : [0.5], "gamma" : [0.5]}
+    rf = svm.SVC()
+    gs = GridSearchCV(estimator=rf, param_grid=param_grid, scoring='accuracy', cv=2, n_jobs=-1, verbose=1)
+    gs = gs.fit(train_x_reduced, train_y)
+    print(gs.best_score_)
+    print(gs.best_params_)
 
     #python .\main.py
 
