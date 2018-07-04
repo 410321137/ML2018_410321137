@@ -51,14 +51,14 @@
      <item>
       <widget class="QPushButton" name="pushButton_3">
        <property name="text">
-        <string>訓練(LR)</string>
+        <string>訓練(SVM)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_4">
        <property name="text">
-        <string>訓練(SVM)</string>
+        <string>訓練(vote: LR + SVM + GNB)</string>
        </property>
       </widget>
      </item>

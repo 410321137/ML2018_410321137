@@ -14,13 +14,16 @@ from scipy.misc import imresize
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.datasets import fetch_mldata
+from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn import metrics
 from sklearn.svm import SVC
+from xgboost.sklearn import XGBClassifier
 from mainwindow2 import Ui_MainWindow
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent = None):
@@ -28,8 +31,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.data_gen)
         self.pushButton_2.clicked.connect(self.std_and_dr)
-        self.pushButton_3.clicked.connect(self.train_LR)
-        self.pushButton_4.clicked.connect(self.train_SVM)
+        self.pushButton_3.clicked.connect(self.train_SVM)
+        self.pushButton_4.clicked.connect(self.train_clr)
         self.pushButton_5.clicked.connect(self.save_model)
 
     def save_pic(self):
@@ -165,18 +168,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textBrowser.setText(str(clf) + '\n' + str(metrics.classification_report(self.test_y, predict)))
     
     def train_SVM(self):
-        clf2 = SVC(C = 100, gamma = 0.0001)
+        #clf2 = SVC(C = 100, gamma = 0.0001)
+        clf2 = GaussianNB()
         t0 = time()
         clf2.fit(self.train_x_reduced, self.train_y)
         predict = clf2.predict(self.test_x_reduced)
         self.label_2.setText('花費時間: ' + str(time() - t0))
         self.textBrowser.setText(str(clf2) + '\n' + str(metrics.classification_report(self.test_y, predict)))
+    
+    def train_clr(self):
+        clf1 = LogisticRegression(random_state=1)
+        clf2 = SVC(C = 100, gamma = 0.0001, probability = True)
+        clf3 = GaussianNB()
+
+        eclf = VotingClassifier(estimators = [('lr', clf1), ('svm', clf2), ('gnb', clf3)], weights= [1.5, 3, 1.5], voting = 'soft')
+        t0 = time()
+        eclf.fit(self.train_x_reduced, self.train_y)
+        predict = eclf.predict(self.test_x_reduced)
+        self.label_2.setText('花費時間: ' + str(time() - t0))
+        self.textBrowser.setText(str(eclf) + '\n' + str(metrics.classification_report(self.test_y, predict)))
 
     def save_model(self):
          #把模型封裝起來以便後續的調用
+        clf1 = LogisticRegression(random_state=1)
+        clf2 = SVC(C = 100, gamma = 0.0001, probability = True)
+        clf3 = GaussianNB()
+        eclf = VotingClassifier(estimators = [('lr', clf1), ('svm', clf2), ('gnb', clf3)], weights= [1.5, 3, 1.5], voting = 'hard')
+
         pipe1 = Pipeline([('sc', StandardScaler()),
                         ('pca', PCA(n_components=100)),
-                        ('clf', LogisticRegression(random_state=1))
+                        ('clf', eclf)
                         ])
         pipe1.fit(self.train_x, self.train_y)
         print('Test accuracy: %.3f' % pipe1.score(self.test_x, self.test_y))

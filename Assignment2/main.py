@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.datasets import fetch_mldata
 from sklearn.model_selection import train_test_split
@@ -60,9 +61,9 @@ if __name__ == '__main__':
         print(i,n)
     '''
     #從上面得到的結果先進行試驗
-    pca = PCA(n_components = 49)
+    pca = PCA(n_components = 16)
     train_img_reduced = pca.fit_transform(train_img)
-    test_img_reduced = pca.fit_transform(test_img)
+    test_img_reduced = pca.transform(test_img)
     #print(train_img_reduced.shape, train_lbl.shape)
 
     '''
@@ -77,11 +78,18 @@ if __name__ == '__main__':
 
     #bp = gs.best_params_
     #clf = svm.SVC(C=bp['C'], kernel='rbf', gamma=bp['gamma'])
+
     clf = svm.SVC(C = 0.1, kernel='rbf', gamma = 0.1)
     clf = clf.fit(train_img_reduced, train_lbl)
     predict = clf.predict(test_img_reduced)
     print("Classification report for SVM classifier: \n %s\n\n%s\n"
       % (clf, metrics.classification_report(test_lbl, predict)))
+
+    clf2 = LogisticRegression(random_state= 1)
+    clf2 = clf2.fit(train_img_reduced, train_lbl)
+    predict = clf2.predict(test_img_reduced)
+    print("Classification report: \n %s\n\n%s\n"
+      % (clf2, metrics.classification_report(test_lbl, predict)))
     #print(svc,svc.score(test_img_reduced, test_lbl))
     #train_img_recovered = pca.inverse_transform(train_img_reduced)
     #show_image(train_img_recovered * 255 , train_lbl, 'test7.jpg')
