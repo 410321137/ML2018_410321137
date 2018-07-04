@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>482</width>
-    <height>299</height>
+    <width>492</width>
+    <height>365</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,16 +62,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QTextBrowser" name="textBrowser">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>120</y>
-      <width>441</width>
-      <height>101</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
@@ -85,17 +75,63 @@
      <string>結果</string>
     </property>
    </widget>
+   <widget class="QGraphicsView" name="graphicsView">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>181</width>
+      <height>171</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView_2">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>130</y>
+      <width>181</width>
+      <height>171</height>
+     </rect>
+    </property>
+   </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>240</y>
-      <width>171</width>
-      <height>16</height>
+      <x>100</x>
+      <y>110</y>
+      <width>47</width>
+      <height>12</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>輸入</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>110</y>
+      <width>47</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>預測</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>310</y>
+      <width>47</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>第     人</string>
     </property>
    </widget>
   </widget>
@@ -104,7 +140,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>482</width>
+     <width>492</width>
      <height>21</height>
     </rect>
    </property>

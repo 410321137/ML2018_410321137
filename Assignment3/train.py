@@ -103,7 +103,28 @@ def find_parameter(train_x_reduced, train_y):
 
     return clf.best_params_
 
+def save_pic():
+    path = 'C:/Users/pistori/Documents/Github/ML2018_410321137/Assignment3/Face'
+    files = os.listdir(path)
+
+    n = 0
+    facelist = []
+    for f in files:
+        if not os.path.isdir(f):
+            if(n % 13 == 0):
+                img = imread(path + '/' + f , mode='L')
+                img = Image.fromarray(img, 'L')
+                #imgI.show()
+                facelist.append(img)
+            n = n + 1
+    
+    f = open('facelist.pickle', 'wb')
+    pickle.dump(facelist, f)
+    f.close()
+            
+
 if __name__ == '__main__':
+    save_pic()
     #產生測試集資料
     #train_x, train_y, test_x, test_y = load_data()
     #print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
@@ -143,8 +164,8 @@ if __name__ == '__main__':
     #pickle.dump(pipe1, f)
     #f.close()
 
-    #python .\main.py
-
+    #python .\train.py
+    #pyuic5 mainwindow.ui -o mainwindow.py
 
 
 
