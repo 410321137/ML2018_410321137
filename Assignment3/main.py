@@ -22,7 +22,7 @@ from mainwindow import Ui_MainWindow
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(parent)
-        self.setupUi(self) #初始化ui
+        self.setupUi(self) 
         self.pushButton.clicked.connect(self.select_file)
         self.pushButton_2.clicked.connect(self.predict)
 
@@ -31,7 +31,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lineEdit.setText(path[0])
 
     def predict(self):
-        pipe = open('pipe1.pickle', 'rb')
+        pipe = open('pipe2.pickle', 'rb')
         pipe = pickle.load(pipe)
 
         path = self.lineEdit.text()
