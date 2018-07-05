@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+import seaborn as sns
 from PIL import Image
 from time import time
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -144,6 +145,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.train_x_reduced = pca.fit_transform(self.train_x_stand)
         self.test_x_reduced = pca.transform(self.test_x_stand)
         self.save_reduce(self.train_x_reduced, self.test_x_reduced)
+        '''
+        plt.scatter(self.train_x_reduced[:, 0], self.train_x_reduced[:, 1], c= self.train_y, edgecolor='none', alpha=0.5, cmap=plt.cm.get_cmap('jet', 50))
+        plt.colorbar()
+        plt.show()
+        '''
         #print(self.train_x_reduced.shape, self.train_y.shape, self.test_x_reduced.shape, self.test_y.shape)
         
         #尋找合適參數
