@@ -35,6 +35,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_3.clicked.connect(self.train_SVM)
         self.pushButton_4.clicked.connect(self.train_clr)
         self.pushButton_5.clicked.connect(self.save_model)
+        self.pushButton_6.clicked.connect(self.get_dir)
+
+    def get_dir(self):
+        self.lineEdit.setText(str(QFileDialog.getExistingDirectory(self, 'select directory')))
 
     def save_pic(self):
         path = 'C:/Users/pistori/Documents/Github/ML2018_410321137/Assignment3/Face'
@@ -174,8 +178,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textBrowser.setText(str(clf) + '\n' + str(metrics.classification_report(self.test_y, predict)))
     
     def train_SVM(self):
-        #clf2 = SVC(C = 100, gamma = 0.0001)
-        clf2 = GaussianNB()
+        clf2 = SVC(C = 100, gamma = 0.0001)
         t0 = time()
         clf2.fit(self.train_x_reduced, self.train_y)
         predict = clf2.predict(self.test_x_reduced)
@@ -187,7 +190,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         clf2 = SVC(C = 100, gamma = 0.0001, probability = True)
         clf3 = GaussianNB()
 
-        eclf = VotingClassifier(estimators = [('lr', clf1), ('svm', clf2), ('gnb', clf3)], weights= [1.5, 3, 1.5], voting = 'soft')
+        eclf = VotingClassifier(estimators = [('lr', clf1), ('svm', clf2), ('gnb', clf3)], weights= [1.5, 3, 1.5], voting = 'hard')
         t0 = time()
         eclf.fit(self.train_x_reduced, self.train_y)
         predict = eclf.predict(self.test_x_reduced)
