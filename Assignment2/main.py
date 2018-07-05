@@ -53,15 +53,15 @@ if __name__ == '__main__':
     #show_image(train_x * 255 , train_y, 'test3.jpg')
 
     #PCA降維
-    
+    '''
     pca = PCA()
     pca.fit(train_x)
     for i in np.arange(0.5, 1.0, 0.05):
         n = find_d(pca.explained_variance_ratio_, i)
         print(i,n)
-    
+    '''
     #從上面得到的結果先進行試驗
-    pca = PCA(n_components = 87)
+    pca = PCA(n_components = 25)
     train_x_reduced = pca.fit_transform(train_x)
     test_x_reduced = pca.transform(test_x)
     #print(train_x_reduced.shape, train_y.shape)
@@ -74,20 +74,19 @@ if __name__ == '__main__':
     gs = gs.fit(train_x_reduced, train_y)
     print(gs.best_score_)
     print(gs.best_params_)
-    '''
 
     plt.scatter(train_x_reduced[:, 0], train_x_reduced[:, 1], c= train_y, edgecolor='none', alpha=0.5, cmap=plt.cm.get_cmap('jet', 10))
     plt.colorbar()
     plt.show()
-    
+    '''
     #bp = gs.best_params_
     #clf = svm.SVC(C=bp['C'], kernel='rbf', gamma=bp['gamma'])
 
-    clf = svm.SVC(C = 0.1, kernel='rbf', gamma = 0.1)
-    clf = clf.fit(train_x_reduced, train_y)
-    predict = clf.predict(test_x_reduced)
-    print("Classification report for SVM classifier: \n %s\n\n%s\n"
-      % (clf, metrics.classification_report(test_y, predict)))
+    #clf = svm.SVC(C = 0.1, kernel='rbf', gamma = 0.1)
+    #clf = clf.fit(train_x_reduced, train_y)
+    #predict = clf.predict(test_x_reduced)
+    #print("Classification report for SVM classifier: \n %s\n\n%s\n"
+    #  % (clf, metrics.classification_report(test_y, predict)))
 
     clf2 = LogisticRegression(random_state= 1)
     clf2 = clf2.fit(train_x_reduced, train_y)
