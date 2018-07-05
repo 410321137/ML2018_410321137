@@ -215,12 +215,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         pipe2.fit(self.train_x, self.train_y)
         print('Test accuracy: %.3f' % pipe2.score(self.test_x, self.test_y))
 
+        pipe3 = Pipeline([('sc', StandardScaler()),
+                        ('pca', PCA(n_components=100)),
+                        ('clf', LogisticRegression(random_state= 1))
+                        ])
+        pipe3.fit(self.train_x, self.train_y)
+        print('Test accuracy: %.3f' % pipe3.score(self.test_x, self.test_y))
+
+        pipe4 = Pipeline([('sc', StandardScaler()),
+                        ('pca', PCA(n_components=100)),
+                        ('clf', GaussianNB())
+                        ])
+        pipe4.fit(self.train_x, self.train_y)
+        print('Test accuracy: %.3f' % pipe4.score(self.test_x, self.test_y))
+
         f = open('pipe1.pickle', 'wb')
         pickle.dump(pipe1, f)
         f.close()
         
         f = open('pipe2.pickle', 'wb')
         pickle.dump(pipe2, f)
+        f.close()
+
+        f = open('pipe3.pickle', 'wb')
+        pickle.dump(pipe3, f)
+        f.close()
+
+        f = open('pipe4.pickle', 'wb')
+        pickle.dump(pipe4, f)
         f.close()
 
         self.label_2.setText('保存完畢')

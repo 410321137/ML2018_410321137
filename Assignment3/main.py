@@ -33,6 +33,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def predict(self):
         pipe = open('pipe2.pickle', 'rb')
         pipe = pickle.load(pipe)
+        
+        pipe2 = open('pipe3.pickle', 'rb')
+        pipe2 = pickle.load(pipe2)
+        
+        pipe3 = open('pipe4.pickle', 'rb')
+        pipe3 = pickle.load(pipe3)
 
         path = self.lineEdit.text()
         img = imread(path, mode='L')
@@ -44,7 +50,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         test.append(img)
         predicted = pipe.predict(test)
         self.show_result(img_s, predicted)
-    
+        predicted2 = pipe2.predict(test)
+        predicted3 = pipe3.predict(test)
+        self.label_6.setText(' ')
+        if(predicted2[0] != predicted[0] or predicted3[0] != predicted[0]):
+            if(predicted2[0] == predicted3[0] and predicted2[0] != predicted[0]):
+                self.label_6.setText('也有可能是: 第 ' + str(predicted2[0]) + ' 人')
+            elif(predicted2[0] != predicted[0] and predicted3[0] != predicted[0]):
+                self.label_6.setText('也有可能是: 第 ' + str(predicted2[0]) + ' 人或第 ' + str(predicted3[0]) + ' 人')
+            elif(predicted2[0] == predicted[0] and predicted3[0] != predicted[0]):
+                self.label_6.setText('也有可能是: 第 ' + str(predicted3[0]) + ' 人')
+            elif(predicted2[0] != predicted[0] and predicted3[0] == predicted[0]):
+                self.label_6.setText('也有可能是: 第 ' + str(predicted2[0]) + ' 人')
+
+            
     def show_result(self, img_s, predict):
         facelist = open('facelist.pickle', 'rb')
         facelist = pickle.load(facelist)

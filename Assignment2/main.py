@@ -12,11 +12,11 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 from sklearn import svm
 
-def show_image(train_img, train_lbl, img_name):
+def show_image(train_x, train_y, img_name):
     img_7 = []
     for i in range(1000):
-      if train_lbl[i] == 7 and len(img_7) < 10:
-          img_7.append(train_img[i])
+      if train_y[i] == 7 and len(img_7) < 10:
+          img_7.append(train_x[i])
     new_img_7 = Image.new('L', (280, 28)) #開10張圖片的大小
 
     x_offset = 0
@@ -42,57 +42,61 @@ def find_d(explained_variance_ratio_, p):
 if __name__ == '__main__':
     mnist = fetch_mldata('MNIST original')
     #將數據拆成訓練跟測試用
-    train_img, test_img, train_lbl, test_lbl = train_test_split( mnist.data, mnist.target, test_size=1 / 7.0, random_state = 0)
+    train_x, test_x, train_y, test_y = train_test_split( mnist.data, mnist.target, test_size=1 / 7.0, random_state = 0)
     #查看原始圖長相
-    show_image(train_img, train_lbl, 'test1.jpg')
+    show_image(train_x, train_y, 'test1.jpg')
 
     #標準化
-    train_img = train_img / 255
-    test_img = test_img / 255
+    train_x = train_x / 255
+    test_x = test_x / 255
 
-    #show_image(train_img * 255 , train_lbl, 'test3.jpg')
+    #show_image(train_x * 255 , train_y, 'test3.jpg')
 
     #PCA降維
     '''
     pca = PCA()
-    pca.fit(train_img)
+    pca.fit(train_x)
     for i in np.arange(0.5, 1.0, 0.1):
         n = find_d(pca.explained_variance_ratio_, i)
         print(i,n)
     '''
     #從上面得到的結果先進行試驗
     pca = PCA(n_components = 16)
-    train_img_reduced = pca.fit_transform(train_img)
-    test_img_reduced = pca.transform(test_img)
-    #print(train_img_reduced.shape, train_lbl.shape)
+    train_x_reduced = pca.fit_transform(train_x)
+    test_x_reduced = pca.transform(test_x)
+    #print(train_x_reduced.shape, train_y.shape)
 
     '''
     #尋找SVM的參數
     param_grid = { "C" : [0.1], "gamma" : [0.1]}
     rf = svm.SVC()
     gs = GridSearchCV(estimator=rf, param_grid=param_grid, scoring='accuracy', cv=2, n_jobs=-1, verbose=1)
-    gs = gs.fit(train_img_reduced, train_lbl)
+    gs = gs.fit(train_x_reduced, train_y)
     print(gs.best_score_)
     print(gs.best_params_)
     '''
 
+    plt.scatter(train_x_reduced[:, 0], train_x_reduced[:, 1], c= train_y, edgecolor='none', alpha=0.5, cmap=plt.cm.get_cmap('jet', 50))
+    plt.colorbar()
+    plt.show()
+    
     #bp = gs.best_params_
     #clf = svm.SVC(C=bp['C'], kernel='rbf', gamma=bp['gamma'])
 
     clf = svm.SVC(C = 0.1, kernel='rbf', gamma = 0.1)
-    clf = clf.fit(train_img_reduced, train_lbl)
-    predict = clf.predict(test_img_reduced)
+    clf = clf.fit(train_x_reduced, train_y)
+    predict = clf.predict(test_x_reduced)
     print("Classification report for SVM classifier: \n %s\n\n%s\n"
-      % (clf, metrics.classification_report(test_lbl, predict)))
+      % (clf, metrics.classification_report(test_y, predict)))
 
     clf2 = LogisticRegression(random_state= 1)
-    clf2 = clf2.fit(train_img_reduced, train_lbl)
-    predict = clf2.predict(test_img_reduced)
+    clf2 = clf2.fit(train_x_reduced, train_y)
+    predict = clf2.predict(test_x_reduced)
     print("Classification report: \n %s\n\n%s\n"
-      % (clf2, metrics.classification_report(test_lbl, predict)))
-    #print(svc,svc.score(test_img_reduced, test_lbl))
-    #train_img_recovered = pca.inverse_transform(train_img_reduced)
-    #show_image(train_img_recovered * 255 , train_lbl, 'test7.jpg')
+      % (clf2, metrics.classification_report(test_y, predict)))
+    #print(svc,svc.score(test_x_reduced, test_y))
+    #train_x_recovered = pca.inverse_transform(train_x_reduced)
+    #show_image(train_x_recovered * 255 , train_y, 'test7.jpg')
 
     #python .\main.py
 
