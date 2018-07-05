@@ -78,13 +78,13 @@ if __name__ == '__main__':
     plt.show()
     '''
     #bp = gs.best_params_
-    #clf = svm.SVC(C=bp['C'], kernel='rbf', gamma=bp['gamma'])
+    clf = svm.SVC(C=bp['C'], kernel='rbf', gamma=bp['gamma'])
 
-    #clf = svm.SVC(C = 0.1, kernel='rbf', gamma = 0.1)
-    #clf = clf.fit(train_x_reduced, train_y)
-    #predict = clf.predict(test_x_reduced)
-    #print("Classification report for SVM classifier: \n %s\n\n%s\n"
-    #  % (clf, metrics.classification_report(test_y, predict)))
+    clf = svm.SVC(C = 0.1, kernel='rbf', gamma = 0.1)
+    clf = clf.fit(train_x_reduced, train_y)
+    predict = clf.predict(test_x_reduced)
+    print("Classification report for SVM classifier: \n %s\n\n%s\n"
+      % (clf, metrics.classification_report(test_y, predict)))
 
     clf2 = LogisticRegression(random_state= 1)
     clf2 = clf2.fit(train_x_reduced, train_y)
