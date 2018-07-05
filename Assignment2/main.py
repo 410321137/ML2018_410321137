@@ -50,8 +50,6 @@ if __name__ == '__main__':
     train_x = train_x / 255
     test_x = test_x / 255
 
-    #show_image(train_x * 255 , train_y, 'test3.jpg')
-
     #PCA降維
     '''
     pca = PCA()
@@ -94,15 +92,5 @@ if __name__ == '__main__':
     print("Classification report: \n %s\n\n%s\n"
       % (clf2, metrics.classification_report(test_y, predict)))
     #print(svc,svc.score(test_x_reduced, test_y))
-    #train_x_recovered = pca.inverse_transform(train_x_reduced)
-    #show_image(train_x_recovered * 255 , train_y, 'test7.jpg')
 
     #python .\main.py
-
-    
-
-
-
-
-
-
