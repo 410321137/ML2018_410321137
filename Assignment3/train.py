@@ -279,7 +279,3 @@ if __name__ == '__main__':
  
     #python .\train.py
     #pyuic5 mainwindow2.ui -o mainwindow2.py
-
-
-
-
