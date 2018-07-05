@@ -10,30 +10,30 @@
 
 首先讓使用者讀入測試資料，產生測試集，並在這裡縮小一下圖片的大小
 
-        img = imread(path + '/' + f , mode='L')
-        img = imresize(img, (30, 40))
+    img = imread(path + '/' + f , mode='L')
+    img = imresize(img, (30, 40))
 
 然後根據訓練的需求，產生由圖片跟標籤(正確答案)產生的array，train_x, train_y, test_x, test_y
 
 為了方便之後調用，利用pickle的功能將array保存，就不用再次讀取並跑回圈
 
     f = open('train_x.pickle', 'wb')
-        pickle.dump(train_x, f)
-        f.close()
+    pickle.dump(train_x, f)
+    f.close()
 
 讀取完測試集資料後就開始標準化
 
     #標準化
-        scaler = StandardScaler()
-        self.train_x_stand = scaler.fit_transform(self.train_x)
-        self.test_x_stand = scaler.fit_transform(self.test_x)
+    scaler = StandardScaler()
+    self.train_x_stand = scaler.fit_transform(self.train_x)
+    self.test_x_stand = scaler.fit_transform(self.test_x)
 
 然後用PCA的方法降低維度
 
     pca = PCA(0.95)
-        self.train_x_reduced = pca.fit_transform(self.train_x_stand)
-        self.test_x_reduced = pca.transform(self.test_x_stand)
-        self.save_reduce(self.train_x_reduced, self.test_x_reduced)
+    self.train_x_reduced = pca.fit_transform(self.train_x_stand)
+    self.test_x_reduced = pca.transform(self.test_x_stand)
+    self.save_reduce(self.train_x_reduced, self.test_x_reduced)
 
 保留95%的方差百分比
 
