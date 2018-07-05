@@ -53,15 +53,15 @@ if __name__ == '__main__':
     #show_image(train_x * 255 , train_y, 'test3.jpg')
 
     #PCA降維
-    '''
+    
     pca = PCA()
     pca.fit(train_x)
-    for i in np.arange(0.5, 1.0, 0.1):
+    for i in np.arange(0.5, 1.0, 0.05):
         n = find_d(pca.explained_variance_ratio_, i)
         print(i,n)
-    '''
+    
     #從上面得到的結果先進行試驗
-    pca = PCA(n_components = 16)
+    pca = PCA(n_components = 87)
     train_x_reduced = pca.fit_transform(train_x)
     test_x_reduced = pca.transform(test_x)
     #print(train_x_reduced.shape, train_y.shape)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     print(gs.best_params_)
     '''
 
-    plt.scatter(train_x_reduced[:, 0], train_x_reduced[:, 1], c= train_y, edgecolor='none', alpha=0.5, cmap=plt.cm.get_cmap('jet', 50))
+    plt.scatter(train_x_reduced[:, 0], train_x_reduced[:, 1], c= train_y, edgecolor='none', alpha=0.5, cmap=plt.cm.get_cmap('jet', 10))
     plt.colorbar()
     plt.show()
     
